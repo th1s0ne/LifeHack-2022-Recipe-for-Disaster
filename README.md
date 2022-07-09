@@ -5,6 +5,8 @@ Our Objectives:
 - to reduce food waste by connecting users to recipes that are able to utilise most of not all of their leftover ingredients.
 - make reducing food waste simpler and more accessible
 
-Execution: telegram bot that accepts inputs of ingredient and quantity from user and presents user with recipe options to best make use of given ingredients together.
+Execution: telegram bot that accepts inputs of ingredient from user and presents user with recipe options to best make use of given ingredients together.
 
 Target Audience: mobile users
+
+Interface: 
