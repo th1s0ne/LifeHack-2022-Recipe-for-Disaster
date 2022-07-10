@@ -1,23 +1,34 @@
 import os
+from statistics import quantiles
 from dotenv import load_dotenv
 from telegram import (
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+    ForceReply,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
+    Update,
 )
 import requests
+import pprint
 from py_edamam import Edamam
 from telegram.ext import (
+    filters,
+    ApplicationBuilder,
     ConversationHandler,
     CallbackQueryHandler,
     CommandHandler,
+    MessageHandler,
 )
+
+
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 
 cuisineType = ""
 dishType = ""
 ROUTES = range(8)
 RESULT = range(1)
-API_Token = os.getenv("API_TOKEN")
-API_ID = os.getenv("API_ID")
 
 
 async def search(update, context):
@@ -106,22 +117,14 @@ async def getDish(update, context):
 async def get(update, context):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Enter ingredients (eg. To search for a recipe with chicken skin and onions, type 'chicken skin onion'.)",
+        text="Enter ingredients (eg. To search for a recipe with chicken skin and onions, type '/getRecipe chicken skin onion'.)",
     )
-    return RESULT
 
 
-async def getData(update, context):
-    query = update.callback_query
-    await query.answer()
-    q = ""
-    for x in query.data:
-        if x == " ":
-            q += "%20"
-        else:
-            q += x
+async def getRecipe(update, context):
+    q = "%20".join(context.args).upper()
 
-    
+    print(q)
 
     if cuisineType == "" and dishType != "":
         url = f"https://api.edamam.com/api/recipes/v2?type=public&q={q}&app_id={API_ID}&app_key={API_Token}&cuisineType={cuisineType}"
@@ -132,11 +135,16 @@ async def getData(update, context):
     else:
         url = f"https://api.edamam.com/api/recipes/v2?type=public&q={q}&app_id={API_ID}&app_key={API_Token}&cuisineType={cuisineType}&dishType={dishType}"
 
-    
-    data = requests.get(url).text()
-    
+    print(url)
+    data = requests.get(url).json()
+    print(data)
 
-    await update.message.reply_text(data)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=data)
+
+
+load_dotenv()
+API_Token = os.getenv("API_TOKEN")
+API_ID = os.getenv("API_ID")
 
 
 search_handler = ConversationHandler(
@@ -152,9 +160,10 @@ search_handler = ConversationHandler(
             CallbackQueryHandler(getDish, pattern=str("Mains")),
             CallbackQueryHandler(getDish, pattern=str("Dessert")),
         ],
-        RESULT: [
-            CallbackQueryHandler(getData),
-        ],
     },
     fallbacks=[CommandHandler("search", search)],
 )
+
+getRecipe_handler = CommandHandler("getRecipe", getRecipe)
+application.add_handler(search_handler)
+application.add_handler(getRecipe_handler)
