@@ -7,7 +7,6 @@ from telegram import (
 import requests
 from py_edamam import Edamam
 from telegram.ext import (
-    ApplicationBuilder,
     ConversationHandler,
     CallbackQueryHandler,
     CommandHandler,
@@ -122,7 +121,7 @@ async def getData(update, context):
         else:
             q += x
 
-    print(q)
+    
 
     if cuisineType == "" and dishType != "":
         url = f"https://api.edamam.com/api/recipes/v2?type=public&q={q}&app_id={API_ID}&app_key={API_Token}&cuisineType={cuisineType}"
@@ -133,11 +132,11 @@ async def getData(update, context):
     else:
         url = f"https://api.edamam.com/api/recipes/v2?type=public&q={q}&app_id={API_ID}&app_key={API_Token}&cuisineType={cuisineType}&dishType={dishType}"
 
-    print(url)
-    data = requests.get(url)
-    print(data)
+    
+    data = requests.get(url).text()
+    
 
-    """await update.message.reply_text(data)"""
+    await update.message.reply_text(data)
 
 
 search_handler = ConversationHandler(

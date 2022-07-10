@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 from telegram import CallbackQuery, Update
 from DonationLocation import donate, areaRetriever
+from learn import learn_handler
+from search import search_handler
 from py_edamam import Edamam
 
 
@@ -17,7 +19,13 @@ from telegram.ext import (
 async def start(update, context):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Testing",
+        text=(
+            "Welcome to NommNommBot!\n"
+            "Feel free to press the following commands:\n"
+            "/search - find new recipes for your leftover ingredient!\n"
+            "/learn - find out more about food wastage in Singapore and actions you can take to allievate this problem!\n"
+            "/donate - find out the nearest Food Bank donation boxes to your house today!"
+        ),
     )
 
 async def location(update, context):
@@ -40,15 +48,6 @@ async def unknown(update, context):
         text="Sorry, I didn't understand that command. Please type /start to start",
     )
 
-
-async def search(update, context):
-    pass
-
-
-async def learn(update, context):
-    pass
-
-
 if __name__ == "__main__":
     load_dotenv()
     BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -58,11 +57,11 @@ if __name__ == "__main__":
 
     e = Edamam(recipes_appid=API_ID, recipes_appkey=API_Token)
 
-    search_handler = CommandHandler("search", search)
-    learn_handler = CommandHandler("learn", learn)
+    start_handler = CommandHandler("start", start)
     donate_handler = CommandHandler("donate", donate)
     unknown_handler = MessageHandler(filters.COMMAND, unknown)
     
+    application.add_handler(start_handler)
     application.add_handler(search_handler)
     application.add_handler(learn_handler)
     application.add_handler(donate_handler)
