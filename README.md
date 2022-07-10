@@ -9,4 +9,8 @@ Execution: telegram bot that accepts inputs of ingredient from user and presents
 
 Target Audience: mobile users
 
-Interface: 
+Interface:  
+- /search command allows users to choose a recipe based on whatever extra ingredients they have, and they also have the option to filter their choices based on their preferences. 
+- /learn command educates users through multiple avenues, such as tips to cut down on food waste or providing informative videos for users to learn more about the significance of food waste. 
+- /donate command provides users with the list of FoodBank drop off locations in their selected choice of region, which better enables the donation of excess unexpired food. 
+
